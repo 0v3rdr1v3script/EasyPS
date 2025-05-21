@@ -1,0 +1,26 @@
+{
+  "name": "easyps-arbitration-tool",
+  "version": "1.0.0",
+  "description": "A free arbitration tool for physical education teachers.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "keywords": [
+    "arbitration",
+    "physical education",
+    "tool"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3"
+  },
+  "devDependencies": {},
+  "homepage": "http://yourhomepage.com"
+}

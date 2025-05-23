@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramétrages</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Paramétrages</h1>
+
+        <div class="section">
+            <h2>Couleur des équipes</h2>
+            <div class="team-colors">
+                <button class="team active">Équipe 1</button>
+                <button class="team">Équipe 2</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Chronométrage</h2>
+            <div class="timer">
+                <button class="timer-option active">Chrono</button>
+                <div class="timer-icon">⏱️</div>
+                <button class="timer-option">Rebours</button>
+            </div>
+        </div>
+
+        <div class="options">
+            <button>Options</button>
+        </div>
+
+        <div class="section">
+            <h2>Cliquer sur l'équipe qui engage</h2>
+            <div class="team-selection">
+                <button class="team-option">
+                    <div class="basketball-icon">🔴</div>
+                    <div>Equipe 1</div>
+                </button>
+                <button class="team-option">
+                    <div class="basketball-icon">🔵</div>
+                    <div>Equipe 2</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.team').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.team').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.timer-option').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.timer-option').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.team-option').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.team-option').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

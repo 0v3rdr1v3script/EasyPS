@@ -87,3 +87,46 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #424242;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .team-score {
+            display: flex;
+            align-items: center;
+        }
+
+        .team-color {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .jersey {
+            background-color: var(--team-color);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .jersey-button {
+            background-color: #424242;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+
+        .timer {
+            font-size: 24px;
+            margin-top: 20px;
+        }

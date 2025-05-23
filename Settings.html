@@ -16,8 +16,10 @@
         <div class="section">
             <h2>Couleur des équipes</h2>
             <div class="team-colors">
-                <button class="team active">Équipe 1</button>
-                <button class="team">Équipe 2</button>
+                <button class="team active" data-team="1">Équipe 1</button>
+                <input type="color" id="color-team1" value="#002fff" style="margin-left:10px;">
+                <button class="team" data-team="2">Équipe 2</button>
+                <input type="color" id="color-team2" value="#f44336" style="margin-left:10px;">
             </div>
         </div>
 
@@ -37,42 +39,23 @@
         <div class="section">
             <h2>Cliquer sur l'équipe qui engage</h2>
             <div class="team-selection">
-                <button class="team-option">
-                    <div class="basketball-icon">🔴</div>
-                    <div>Equipe 1</div>
-                </button>
-                <button class="team-option">
-                    <div class="basketball-icon">🔵</div>
-                    <div>Equipe 2</div>
-                </button>
+                <div class="team-container" style="display:inline-block; margin-right:20px;">
+                    <button class="team-option" data-team="1">
+                        <div>Equipe 1</div>
+                    </button>
+                    <div style="width:30px; height:30px; background-color: #002fff; border-radius:50%; margin: 10px auto 0 auto;" id="display-color-team1"></div>
+                </div>
+                <div class="team-container" style="display:inline-block;">
+                    <button class="team-option" data-team="2">
+                        <div>Equipe 2</div>
+                    </button>
+                    <div style="width:30px; height:30px; background-color: #f44336; border-radius:50%; margin: 10px auto 0 auto;" id="display-color-team2"></div>
+                </div>
             </div>
+            <script></script>
         </div>
     </div>
 
-    <script>
-        document.querySelectorAll('.team').forEach(button => {
-            button.addEventListener('click', function() {
-                document.querySelectorAll('.team').forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        document.querySelectorAll('.timer-option').forEach(button => {
-            button.addEventListener('click', function() {
-                document.querySelectorAll('.timer-option').forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        document.querySelectorAll('.team-option').forEach(button => {
-            button.addEventListener('click', function() {
-                document.querySelectorAll('.team-option').forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-        document.querySelector('.options ').addEventListener('click', function() {
-            // option : demande a maman
-        });
-    </script>
+    <script src="main.js"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@
         .container {
             background-color: white;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 20px rgba(0, 0, 0, 0.1);
             padding: 20px;
             width: 90%;
             max-width: 500px;
@@ -86,12 +86,15 @@
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
+
+
+        
         }
         .scoreboard {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #424242;
+            background-color: #00796b;
             color: white;
             padding: 10px;
             border-radius: 5px;
@@ -101,6 +104,9 @@
         .team-score {
             display: flex;
             align-items: center;
+            font-family: "poppins";
+            font-size: 30px;
+            font-weight: 300;
         }
 
         .team-color {
@@ -118,7 +124,9 @@
         }
 
         .jersey-button {
-            background-color: #424242;
+            font-family: "poppins";
+            font-size: 20px;
+            background-color: #00796b;
             color: white;
             padding: 10px;
             border-radius: 5px;
@@ -127,7 +135,10 @@
         }
 
         .timer {
-            font-size: 24px;
+            font-size: 40px;
             margin-top: 20px;
+            font-family: "poppins";
+            font-weight: 300;
+            color: #00796b;
         }
 

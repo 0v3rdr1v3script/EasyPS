@@ -180,6 +180,51 @@ if (path.endsWith('Match.html')) {
         });
     }
 
+            // --- Gestion du mode chrono/rebours ---
+        let timerMode = localStorage.getItem('timer-mode') || 'chrono';
+        let timerElement = document.getElementById('timer');
+        // let timerInterval; // Removed duplicate declaration
+        let duration = parseInt(localStorage.getItem('match-duration')) || 10; // Durée par défaut de 10 minutes
+
+        function formatTime(sec) {
+            let m = Math.floor(sec / 60);
+            let s = sec % 60;
+            return (m < 10 ? '0' : '') + m + "'" + (s < 10 ? '0' : '') + s;
+        }
+
+        function startChrono() {
+            let seconds = 0;
+            timerElement.textContent = formatTime(seconds);
+            timerInterval = setInterval(() => {
+                seconds++;
+                timerElement.textContent = formatTime(seconds);
+            }, 1000);
+        }
+
+        function startRebours() {
+            let seconds = duration * 60;
+            timerElement.textContent = formatTime(seconds);
+            timerInterval = setInterval(() => {
+                seconds--;
+                timerElement.textContent = formatTime(seconds);
+                if (seconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerElement.textContent = "00'00";
+                }
+            }, 1000);
+        }
+
+        // Lancer le timer uniquement au clic sur le bouton
+        document.getElementById('start-timer').addEventListener('click', function() {
+            // Empêche de lancer plusieurs timers
+            if (timerInterval) clearInterval(timerInterval);
+            if (timerMode === 'rebours') {
+                startRebours();
+            } else {
+                startChrono();
+            }
+        });
+
     // Initialisation
     updateScores();
     updateTimer();

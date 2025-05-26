@@ -3,12 +3,9 @@ const path = window.location.pathname;
 
 // --- Pour index.html ---
 if (path.endsWith('index.html')) {
-    const startBtn = document.getElementById('start-arbitrage');
-    if (startBtn) {
-        startBtn.addEventListener('click', function() {
+        document.getElementById('arbitrage').addEventListener('click', function() {
             window.location.href = 'Settings.html';
         });
-    }
 }
 
 

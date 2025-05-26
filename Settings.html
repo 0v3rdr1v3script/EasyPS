@@ -49,12 +49,98 @@
                     <button class="team-option" data-team="2">
                         <div>Equipe 2</div>
                     </button>
-                    <div style="width:30px; height:30px; background-color: #f44336; border-radius:50%; margin: 10px auto 0 auto;" id="display-color-team2"></div>
-                </div>
+                <div style="width:30px; height:30px; background-color: #f44336; border-radius:50%; margin: 10px auto 0 auto;" id="display-color-team2"></div>
+                <br>
+            </div>
+            <div>
+                <button class="classic-button" id="start-game" style="margin-left: 40px;">Lancer le jeu</button>
             </div>
         </div>
     </div>
+    <script>
+        // --- Pour Settings.html ---
 
-    <script src="main.js"></script>
+        // Gestion des boutons équipe
+        document.querySelectorAll('.team').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.team').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Gestion des boutons chrono/rebours
+        document.querySelectorAll('.timer-option').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.timer-option').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Sauvegarde des couleurs dans localStorage
+        const colorTeam1 = document.getElementById('color-team1');
+        const colorTeam2 = document.getElementById('color-team2');
+        if (colorTeam1 && colorTeam2) {
+            colorTeam1.addEventListener('input', function() {
+                localStorage.setItem('color-team1', this.value);
+                updateTeamColors();
+            });
+            colorTeam2.addEventListener('input', function() {
+                localStorage.setItem('color-team2', this.value);
+                updateTeamColors();
+            });
+            // Charger la couleur si déjà choisie
+            window.addEventListener('DOMContentLoaded', function() {
+                const c1 = localStorage.getItem('color-team1');
+                const c2 = localStorage.getItem('color-team2');
+                if (c1) colorTeam1.value = c1;
+                if (c2) colorTeam2.value = c2;
+                updateTeamColors();
+            });
+            // Met à jour la couleur des containers selon la sélection
+            function updateTeamColors() {
+                const c1 = colorTeam1.value;
+                const c2 = colorTeam2.value;
+                const disp1 = document.getElementById('display-color-team1');
+                const disp2 = document.getElementById('display-color-team2');
+                if (disp1) disp1.style.backgroundColor = c1;
+                if (disp2) disp2.style.backgroundColor = c2;
+            }
+        }
+
+        // Sauvegarde de l'équipe qui engage
+        document.querySelectorAll('.team-option').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.team-option').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                localStorage.setItem('possession', this.getAttribute('data-team'));
+            });
+        });
+
+        // Options bouton (placeholder)
+        const optionsBtn = document.querySelector('.options button');
+        if (optionsBtn) {
+            optionsBtn.addEventListener('click', function() {
+                // option : demande a maman
+            });
+        }
+
+        // Lancer le jeu
+        const startGameBtn = document.getElementById('start-game');
+        if (startGameBtn) {
+            startGameBtn.addEventListener('click', function() {
+            const activeTeam = document.querySelector('.team-option.active');
+            if (!activeTeam) {
+                alert('Veuillez sélectionner une équipe qui engage.');
+                return;
+            }
+            const possession = localStorage.getItem('possession');
+            if (possession) {
+                window.location.href = 'Match.html?possession=' + possession;
+            } else {
+                alert('Veuillez sélectionner une équipe qui engage.');
+            }
+            });
+        }
+    </script>
 </body>
 </html>

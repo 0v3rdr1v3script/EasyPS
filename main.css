@@ -66,7 +66,7 @@
             border: none;
             font-size: 16px;
         }
-        .team.active, .timer-option.active, .team-option.active {
+        .timer-option.active, .team-option.active {
             background-color: #00796b;
             color: white;
         }
@@ -130,3 +130,4 @@
             font-size: 24px;
             margin-top: 20px;
         }
+

@@ -225,6 +225,11 @@ if (path.endsWith('Match.html')) {
             }
         });
 
+        document.getElementById('match-end').addEventListener('click', function() {
+            window.location.href = 'Statistiques.html';
+        });
+
+
     // Initialisation
     updateScores();
     updateTimer();

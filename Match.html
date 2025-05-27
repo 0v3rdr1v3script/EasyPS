@@ -41,7 +41,14 @@
         </div>
         <button id="start-timer" class="classic-button" style="margin-top:15px;">Démarrer le temps</button>
         <button id="match-end" class="classic-button" style="margin-top:15px;">Fin du match</button>
+        <button id="back-btn" class="classic-button" style="margin-top:15px;">Retour</button>
         <script src="main.js"></script>
+        <script>
+        // Bouton retour
+        document.getElementById('back-btn').addEventListener('click', function() {
+            window.history.back();
+        });
+        </script>
     </div>
 </body>
 </html>

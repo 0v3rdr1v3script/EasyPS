@@ -60,6 +60,9 @@
             <div style="text-align:center; margin-top:20px;">
             <button id="start-match" class="classic-button">Lancer le match</button>
             </div>
+            <div style="text-align:center; margin-top:20px;">
+            <button id="back-btn" class="classic-button">Retour</button>
+            </div>
         </div>
     </div>
     <script>
@@ -159,6 +162,10 @@
             });
         }
 
+        // Bouton retour
+        document.getElementById('back-btn').addEventListener('click', function() {
+            window.history.back();
+        });
     </script>
 </body>
 </html>

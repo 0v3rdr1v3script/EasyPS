@@ -15,12 +15,10 @@
     <h1>EasyPS</h1>
     <button class="classic-button" id="arbitrage">Lancer l'arbitrage</button>
     <script>
-        if (window.location.pathname.endsWith('index.html')) {
-        document.getElementById('arbitrage').addEventListener('click', function() {
-            window.location.href = 'Settings.html';
-        });
-}
+    document.getElementById('arbitrage').onclick = function() {
+        location.href = 'Settings.html';
+    };
     </script>
-    
+
 </body>
 </html>

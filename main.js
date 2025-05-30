@@ -122,19 +122,14 @@ if (path.endsWith('Match.html')) {
         if (s2) s2.textContent = score2;
     }
 
-    function updateTimer() {
-        let min = String(Math.floor(timer / 60)).padStart(2, '0');
-        let sec = String(timer % 60).padStart(2, '0');
-        const timerDiv = document.getElementById('timer');
-        if (timerDiv) timerDiv.textContent = `${min}'${sec}`;
-    }
 
-    function startTimer() {
-        if (timerInterval) return;
-        timerInterval = setInterval(() => {
-            timer++;
-            updateTimer();
-        }, 1000);
+    function updateTimer() {
+        const timerElement = document.getElementById('timer');
+        if (timerElement) {
+            let minutes = Math.floor(timer / 60);
+            let seconds = timer % 60;
+            timerElement.textContent = `${minutes < 10 ? '0' : ''}${minutes}'${seconds < 10 ? '0' : ''}${seconds}`;
+        }
     }
 
     const tirBtn = document.getElementById('tir');

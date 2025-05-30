@@ -39,7 +39,6 @@
         <div class="timer" id="timer">
             00'00
         </div>
-        <button id="start-timer" class="classic-button" style="margin-top:15px;">Démarrer le temps</button>
         <button id="match-end" class="classic-button" style="margin-top:15px;">Fin du match</button>
         <button id="back-btn" class="classic-button" style="margin-top:15px;">Retour</button>
         <script src="main.js"></script>
@@ -48,6 +47,54 @@
         document.getElementById('back-btn').addEventListener('click', function() {
             window.history.back();
         });
+
+        // --- Chronomètre/Rebours automatique ---
+        let timerMode = localStorage.getItem('timer-mode') || 'chrono';
+        let timerElement = document.getElementById('timer');
+        let timerInterval;
+        // Récupère la durée depuis le localStorage (minutes et secondes)
+        let min = parseInt(localStorage.getItem('match-duration-min')) || 10;
+        let sec = parseInt(localStorage.getItem('match-duration-sec')) || 0;
+        let duration = min * 60 + sec;
+
+        function formatTime(sec) {
+            let m = Math.floor(sec / 60);
+            let s = sec % 60;
+            return (m < 10 ? '0' : '') + m + "'" + (s < 10 ? '0' : '') + s;
+        }
+
+        function startChrono() {
+            let seconds = 0;
+            timerElement.textContent = formatTime(seconds);
+            timerInterval = setInterval(() => {
+                seconds++;
+                timerElement.textContent = formatTime(seconds);
+            }, 1000);
+        }
+
+        function startRebours() {
+            let seconds = duration;
+            timerElement.textContent = formatTime(seconds);
+            timerInterval = setInterval(() => {
+                seconds--;
+                timerElement.textContent = formatTime(seconds);
+                if (seconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerElement.textContent = "00'00";
+                }
+            }, 1000);
+        }
+
+        // Démarrage automatique au chargement de la page
+        window.addEventListener('DOMContentLoaded', function() {
+            if (timerInterval) clearInterval(timerInterval);
+            if (timerMode === 'rebours') {
+                startRebours();
+            } else {
+                startChrono();
+            }
+        });
+
         </script>
     </div>
 </body>

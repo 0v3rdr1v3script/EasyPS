@@ -45,21 +45,18 @@
             <h2>Cliquer sur l'équipe qui engage</h2>
             <div class="team-selection">
             <div class="team-container" style="display:inline-block; margin-right:20px;">
-                <button class="team-option" data-team="1">
+            <button class="team-option" data-team="1" id="start-match">
                 <div>Equipe 1</div>
                 </button>
                 <div style="width:30px; height:30px; background-color: #002fff; border-radius:50%; margin: 10px auto 0 auto;" id="display-color-team1"></div>
             </div>
             <div class="team-container" style="display:inline-block;">
-                <button class="team-option" data-team="2">
+                <button class="team-option" data-team="2" id="start-match">
                 <div>Equipe 2</div>
                 </button>
                 <div style="width:30px; height:30px; background-color: #f44336; border-radius:50%; margin: 10px auto 0 auto;" id="display-color-team2"></div>
                 <br>
             </div>
-            </div>
-            <div style="text-align:center; margin-top:20px;">
-            <button id="start-match" class="classic-button">Lancer le match</button>
             </div>
             <div style="text-align:center; margin-top:20px;">
             <button id="back-btn" class="classic-button">Retour</button>
@@ -135,33 +132,35 @@
             });
         }
 
-        // Stocke la durée du match dans le localStorage à chaque changement
-        const matchDurationInput = document.getElementById('match-duration');
-        if (matchDurationInput) {
-        // Charger la valeur sauvegardée si elle existe
-        window.addEventListener('DOMContentLoaded', function() {
-            const savedDuration = localStorage.getItem('match-duration');
-            if (savedDuration) matchDurationInput.value = savedDuration;
-        });
-        matchDurationInput.addEventListener('input', function() {
-            localStorage.setItem('match-duration', this.value);
-        });
+        // Stocke la durée du match (minutes et secondes) dans le localStorage à chaque changement
+        const matchDurationMinInput = document.getElementById('match-duration-min');
+        const matchDurationSecInput = document.getElementById('match-duration-sec');
+        if (matchDurationMinInput && matchDurationSecInput) {
+            // Charger les valeurs sauvegardées si elles existent
+            window.addEventListener('DOMContentLoaded', function() {
+                const savedMin = localStorage.getItem('match-duration-min');
+                const savedSec = localStorage.getItem('match-duration-sec');
+                if (savedMin !== null) matchDurationMinInput.value = savedMin;
+                if (savedSec !== null) matchDurationSecInput.value = savedSec;
+            });
+            matchDurationMinInput.addEventListener('input', function() {
+                localStorage.setItem('match-duration-min', this.value);
+            });
+            matchDurationSecInput.addEventListener('input', function() {
+                localStorage.setItem('match-duration-sec', this.value);
+            });
         }
 
         // Lancement du match
-        const startMatchBtn = document.getElementById('start-match');
-        if (startMatchBtn) {
-            startMatchBtn.addEventListener('click', function() {
-            // Vérifie si une équipe a été sélectionnée pour l'engagement
-            const selectedTeam = document.querySelector('.team-option.active');
-            if (!selectedTeam) {
-                alert('Veuillez sélectionner l\'équipe qui engage avant de lancer le match.');
-                return;
-            }
-            // Redirection vers la page de match
+        document.querySelectorAll('.team-option').forEach(button => {
+            button.addEventListener('click', function() {
+            document.querySelectorAll('.team-option').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            localStorage.setItem('possession', this.getAttribute('data-team'));
+            // Lancer le match dès qu'une équipe est sélectionnée
             window.location.href = 'Match.html';
             });
-        }
+        });
 
         // Bouton retour
         document.getElementById('back-btn').addEventListener('click', function() {

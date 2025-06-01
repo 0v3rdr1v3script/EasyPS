@@ -134,6 +134,7 @@ if (path.endsWith('Match.html')) {
 
     const tirBtn = document.getElementById('tir');
     const marqueBtn = document.getElementById('marque');
+    const doublePasBtn = document.getElementById('double-pas');
     const recupEquipeBtn = document.getElementById('recup-equipe');
     const recupAdverseBtn = document.getElementById('recup-adverse');
     const perteBalleBtn = document.getElementById('perte-balle');
@@ -147,8 +148,18 @@ if (path.endsWith('Match.html')) {
     }
     if (marqueBtn) {
         marqueBtn.addEventListener('click', () => {
-            if (possession === '1') score1++;
-            else score2++;
+            if (possession === '1') score1 += 2;
+            else score2 += 2;
+            updateScores();
+            const tirOptions = document.getElementById('tir-options');
+            if (tirOptions) tirOptions.style.display = 'none';
+            switchPossession();
+        });
+    }
+    if (doublePasBtn) {
+        doublePasBtn.addEventListener('click', () => {
+            if (possession === '1') score1 += 10;
+            else score2 += 10;
             updateScores();
             const tirOptions = document.getElementById('tir-options');
             if (tirOptions) tirOptions.style.display = 'none';

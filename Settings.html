@@ -37,10 +37,6 @@
             </div>
         </div>
 
-        <div class="options">
-            <button>Options</button>
-        </div>
-
         <div class="section">
             <h2>Cliquer sur l'équipe qui engage</h2>
             <div class="team-selection">
@@ -123,14 +119,6 @@
                 localStorage.setItem('possession', this.getAttribute('data-team'));
             });
         });
-
-        // Options bouton (placeholder)
-        const optionsBtn = document.querySelector('.options button');
-        if (optionsBtn) {
-            optionsBtn.addEventListener('click', function() {
-                // option : demande a maman
-            });
-        }
 
         // Stocke la durée du match (minutes et secondes) dans le localStorage à chaque changement
         const matchDurationMinInput = document.getElementById('match-duration-min');

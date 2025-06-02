@@ -328,6 +328,7 @@ if (path.endsWith('Statistiques.html')) {
     // Récupère les stats du match
     const color1 = localStorage.getItem('color-team1') || '#002fff';
     const color2 = localStorage.getItem('color-team2') || '#f44336';
+    const color3 = "#808080"; // gris
     let stats = JSON.parse(localStorage.getItem('matchStats') || '{}');
     let total = stats.totalTime || 1;
     let p1 = Math.round((stats.possession?.['1'] || 0) * 100 / total);
@@ -344,6 +345,34 @@ if (path.endsWith('Statistiques.html')) {
     </svg>`;
     const possessionBarElem = document.getElementById('possession-bar');
     if (possessionBarElem) possessionBarElem.innerHTML = bar;
+
+    // Calcul du nombre de tirs et possessions pour chaque équipe
+    let tirs1 = stats.tirs?.['1'] || 0;
+    let tirs2 = stats.tirs?.['2'] || 0;
+    let possessions1 = stats.pertes?.['2'] || 0; // possessions de l'équipe 1 = pertes de l'équipe 2
+    let possessions2 = stats.pertes?.['1'] || 0; // possessions de l'équipe 2 = pertes de l'équipe 1
+
+    // On ajoute 1 possession initiale pour chaque équipe si elles ont eu la balle au moins une fois
+    if ((stats.tirs?.['1'] || stats.buts?.['1'] || stats.pertes?.['1'])) possessions1++;
+    if ((stats.tirs?.['2'] || stats.buts?.['2'] || stats.pertes?.['2'])) possessions2++;
+
+    // Barres distinctes pour chaque équipe
+    function tirBar(tirs, possessions, color) {
+        let percent = possessions ? Math.round((tirs * 100) / possessions) : 0;
+        return `<svg width="100%" height="30">
+            <rect x="0" y="5" width="100%" height="20" fill="${color3}"/>
+            <rect x="0" y="5" width="${percent}%" height="20" fill="${color}"/>
+            <text x="10" y="20" fill="#fff" font-size="14">${tirs} tirs / ${possessions} possessions</text>
+            <text x="95%" y="20" fill="#fff" font-size="14" text-anchor="end">${percent}%</text>
+        </svg>`;
+    }
+
+    const tirsurpossessionElem = document.getElementById('tir-sur-possession');
+    if (tirsurpossessionElem) {
+        tirsurpossessionElem.innerHTML =
+            `<div style="margin-bottom:8px;">${tirBar(tirs1, possessions1, color1)}</div>
+             <div>${tirBar(tirs2, possessions2, color2)}</div>`;
+    }
 
     // Affichage des autres stats
     const tirsElem = document.getElementById('tirs');

@@ -349,12 +349,14 @@ if (path.endsWith('Statistiques.html')) {
     // Calcul du nombre de tirs et possessions pour chaque équipe
     let tirs1 = stats.tirs?.['1'] || 0;
     let tirs2 = stats.tirs?.['2'] || 0;
-    let possessions1 = stats.pertes?.['2'] || 0; // possessions de l'équipe 1 = pertes de l'équipe 2
-    let possessions2 = stats.pertes?.['1'] || 0; // possessions de l'équipe 2 = pertes de l'équipe 1
 
-    // On ajoute 1 possession initiale pour chaque équipe si elles ont eu la balle au moins une fois
-    if ((stats.tirs?.['1'] || stats.buts?.['1'] || stats.pertes?.['1'])) possessions1++;
-    if ((stats.tirs?.['2'] || stats.buts?.['2'] || stats.pertes?.['2'])) possessions2++;
+    // Possessions = pertes de balle + tirs + buts pour chaque équipe
+    let possessions1 = (stats.pertes?.['1'] || 0) + (stats.tirs?.['1'] || 0) + (stats.buts?.['1'] || 0);
+    let possessions2 = (stats.pertes?.['2'] || 0) + (stats.tirs?.['2'] || 0) + (stats.buts?.['2'] || 0);
+
+    // On considère au moins 1 possession si l'équipe a eu la balle
+    if (possessions1 === 0 && (stats.possession?.['1'] > 0)) possessions1 = 1;
+    if (possessions2 === 0 && (stats.possession?.['2'] > 0)) possessions2 = 1;
 
     // Barres distinctes pour chaque équipe
     function tirBar(tirs, possessions, color) {
@@ -382,3 +384,8 @@ if (path.endsWith('Statistiques.html')) {
     const pertesElem = document.getElementById('pertes');
     if (pertesElem) pertesElem.textContent = `${stats.pertes?.['1'] || 0} - ${stats.pertes?.['2'] || 0}`;
 }
+
+// Bouton retour
+document.getElementById('back-btn').addEventListener('click', function() {
+    window.history.back();
+});

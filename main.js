@@ -94,19 +94,6 @@ if (path.endsWith('Match.html')) {
     if (team1ColorDiv) team1ColorDiv.style.backgroundColor = team1Color;
     if (team2ColorDiv) team2ColorDiv.style.backgroundColor = team2Color;
 
-    // Affichage de l'équipe en possession sur le jersey
-    function updatePossessionDisplay() {
-        const label = document.getElementById('possession-label');
-        const jersey = document.getElementById('jersey');
-        if (!label || !jersey) return;
-        if (possession === '1') {
-            label.textContent = "Possession : Équipe 1";
-            jersey.style.backgroundColor = team1Color;
-        } else {
-            label.textContent = "Possession : Équipe 2";
-            jersey.style.backgroundColor = team2Color;
-        }
-    }
 
     // Changement de possession
     function switchPossession() {
@@ -114,6 +101,29 @@ if (path.endsWith('Match.html')) {
         localStorage.setItem('possession', possession);
         updatePossessionDisplay();
     }
+
+        // Affichage de l'équipe en possession sur le jersey
+    function updatePossessionDisplay() {
+        const label = document.getElementById('possession-label');
+        const jersey = document.getElementById('jersey');
+        if (!label || !jersey) return;
+        // Always get the latest colors from localStorage
+        const currentTeam1Color = localStorage.getItem('color-team1') || '#002fff';
+        const currentTeam2Color = localStorage.getItem('color-team2') || '#f44336';
+        if (possession === '1') {
+            label.textContent = "Possession : Équipe 1";
+            jersey.style.backgroundColor = currentTeam1Color;
+        } else {
+            label.textContent = "Possession : Équipe 2";
+            jersey.style.backgroundColor = currentTeam2Color;
+        }
+    }
+
+    // S'assurer que l'affichage de la possession est mis à jour après le chargement du DOM
+    window.addEventListener('DOMContentLoaded', function() {
+        updatePossessionDisplay();
+    });
+
 
     function updateScores() {
         const s1 = document.getElementById('score1');
@@ -136,14 +146,21 @@ if (path.endsWith('Match.html')) {
     const marqueBtn = document.getElementById('marque');
     const doublePasBtn = document.getElementById('double-pas');
     const recupEquipeBtn = document.getElementById('recup-equipe');
-    const recupAdverseBtn = document.getElementById('recup-adverse');
+    // const recupAdverseBtn = document.getElementById('recup-adverse'); // Retiré
     const perteBalleBtn = document.getElementById('perte-balle');
 
     if (tirBtn) {
         tirBtn.addEventListener('click', () => {
             const tirOptions = document.getElementById('tir-options');
-            if (tirOptions) tirOptions.style.display = 'block';
-            startTimer();
+            if (tirOptions) {
+                // Toggle display: show if hidden, hide if visible
+                if (tirOptions.style.display === 'block') {
+                    tirOptions.style.display = 'none';
+                } else {
+                    tirOptions.style.display = 'block';
+                    // startTimer(); // Removed: function does not exist
+                }
+            }
         });
     }
     if (marqueBtn) {
@@ -172,17 +189,12 @@ if (path.endsWith('Match.html')) {
             if (tirOptions) tirOptions.style.display = 'none';
         });
     }
-    if (recupAdverseBtn) {
-        recupAdverseBtn.addEventListener('click', () => {
-            switchPossession();
-            const tirOptions = document.getElementById('tir-options');
-            if (tirOptions) tirOptions.style.display = 'none';
-        });
-    }
     if (perteBalleBtn) {
         perteBalleBtn.addEventListener('click', () => {
             switchPossession();
-            startTimer();
+            const tirOptions = document.getElementById('tir-options');
+            if (tirOptions) tirOptions.style.display = 'none';
+            // startTimer(); // Removed: function does not exist
         });
     }
 
@@ -274,12 +286,14 @@ if (path.endsWith('Match.html')) {
             // Changer la possession
             let newTeam = matchStats.currentPossession === '1' ? '2' : '1';
             switchPossessionStats(newTeam);
+            localStorage.setItem('matchStats', JSON.stringify(matchStats));
         });
     }
     if (tirBtn) {
         tirBtn.addEventListener('click', function() {
             matchStats.tirs[matchStats.currentPossession]++;
             // Affiche les options de tir (déjà géré dans ton code)
+            localStorage.setItem('matchStats', JSON.stringify(matchStats));
         });
     }
     if (marqueBtn) {
@@ -288,17 +302,20 @@ if (path.endsWith('Match.html')) {
             // Après un but, la possession change
             let newTeam = matchStats.currentPossession === '1' ? '2' : '1';
             switchPossessionStats(newTeam);
+            localStorage.setItem('matchStats', JSON.stringify(matchStats));
         });
     }
     if (recupEquipeBtn) {
         recupEquipeBtn.addEventListener('click', function() {
             // La même équipe garde la possession, rien à faire
+            localStorage.setItem('matchStats', JSON.stringify(matchStats));
         });
     }
-    if (recupAdverseBtn) {
+    if (typeof recupAdverseBtn !== 'undefined' && recupAdverseBtn) {
         recupAdverseBtn.addEventListener('click', function() {
             let newTeam = matchStats.currentPossession === '1' ? '2' : '1';
             switchPossessionStats(newTeam);
+            localStorage.setItem('matchStats', JSON.stringify(matchStats));
         });
     }
 
@@ -320,6 +337,11 @@ if (path.endsWith('Match.html')) {
     // Initialisation
     updateScores();
     updateTimer();
+    // S'assurer que les couleurs sont chargées après le chargement du DOM
+    window.addEventListener('DOMContentLoaded', function() {
+        updatePossessionDisplay();
+    });
+    // Appel immédiat pour compatibilité si le DOM est déjà prêt
     updatePossessionDisplay();
 }
 
@@ -349,14 +371,26 @@ if (path.endsWith('Statistiques.html')) {
     // Calcul du nombre de tirs et possessions pour chaque équipe
     let tirs1 = stats.tirs?.['1'] || 0;
     let tirs2 = stats.tirs?.['2'] || 0;
+    let buts1 = stats.buts?.['1'] || 0;
+    let buts2 = stats.buts?.['2'] || 0;
+    let pertes1 = stats.pertes?.['1'] || 0;
+    let pertes2 = stats.pertes?.['2'] || 0;
 
-    // Possessions = pertes de balle + tirs + buts pour chaque équipe
-    let possessions1 = (stats.pertes?.['1'] || 0) + (stats.tirs?.['1'] || 0) + (stats.buts?.['1'] || 0);
-    let possessions2 = (stats.pertes?.['2'] || 0) + (stats.tirs?.['2'] || 0) + (stats.buts?.['2'] || 0);
+    // Calcul du nombre de changements de possession (la balle change de camp)
+    let nbChangementsPossession = 0;
+    if (stats && stats.possession) {
+        // On peut approximer le nombre de changements de possession par le nombre total de pertes + buts
+        nbChangementsPossession = (parseInt(pertes1, 10) + parseInt(pertes2, 10)) + (parseInt(buts1, 10) + parseInt(buts2, 10));
+    }
+
+    // Possessions = nombre de changements de possession pour chaque équipe
+    // On répartit équitablement (ou selon la possession initiale si besoin)
+    let possessions1 = Math.floor(nbChangementsPossession / 2);
+    let possessions2 = nbChangementsPossession - possessions1;
 
     // On considère au moins 1 possession si l'équipe a eu la balle
-    if (possessions1 === 0 && (stats.possession?.['1'] > 0)) possessions1 = 1;
-    if (possessions2 === 0 && (stats.possession?.['2'] > 0)) possessions2 = 1;
+    if (possessions1 === 0 && (parseInt(stats.possession?.['1'] || 0, 10) > 0)) possessions1 = 1;
+    if (possessions2 === 0 && (parseInt(stats.possession?.['2'] || 0, 10) > 0)) possessions2 = 1;
 
     // Barres distinctes pour chaque équipe
     function tirBar(tirs, possessions, color) {
@@ -372,17 +406,17 @@ if (path.endsWith('Statistiques.html')) {
     const tirsurpossessionElem = document.getElementById('tir-sur-possession');
     if (tirsurpossessionElem) {
         tirsurpossessionElem.innerHTML =
-            `<div style="margin-bottom:8px;">${tirBar(tirs1, possessions1, color1)}</div>
+            `<div style="margin-bottom:8px;">${tirBar(tirs1, possessions1 + 1, color1)}</div>
              <div>${tirBar(tirs2, possessions2, color2)}</div>`;
     }
 
     // Affichage des autres stats
     const tirsElem = document.getElementById('tirs');
-    if (tirsElem) tirsElem.textContent = `${stats.tirs?.['1'] || 0} - ${stats.tirs?.['2'] || 0}`;
+    if (tirsElem) tirsElem.textContent = `${tirs1} - ${tirs2}`;
     const butsElem = document.getElementById('buts');
-    if (butsElem) butsElem.textContent = `${stats.buts?.['1'] || 0} - ${stats.buts?.['2'] || 0}`;
+    if (butsElem) butsElem.textContent = `${buts1} - ${buts2}`;
     const pertesElem = document.getElementById('pertes');
-    if (pertesElem) pertesElem.textContent = `${stats.pertes?.['1'] || 0} - ${stats.pertes?.['2'] || 0}`;
+    if (pertesElem) pertesElem.textContent = `${pertes1} - ${pertes2}`;
 }
 
 // Bouton retour

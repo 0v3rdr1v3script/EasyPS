@@ -3,11 +3,13 @@ const path = window.location.pathname;
 
 // --- Pour index.html ---
 if (path.endsWith('index.html')) {
-        document.getElementById('arbitrage').addEventListener('click', function() {
+    const arbitrageBtn = document.getElementById('arbitrage');
+    if (arbitrageBtn) {
+        arbitrageBtn.addEventListener('click', function() {
             window.location.href = 'Settings.html';
         });
+    }
 }
-
 
 // --- Pour Settings.html ---
 if (path.endsWith('Settings.html')) {
@@ -24,6 +26,8 @@ if (path.endsWith('Settings.html')) {
         button.addEventListener('click', function() {
             document.querySelectorAll('.timer-option').forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
+            // Sauvegarde du mode chrono/rebours dans le localStorage
+            localStorage.setItem('timer-mode', this.textContent.trim().toLowerCase());
         });
     });
 
@@ -39,7 +43,6 @@ if (path.endsWith('Settings.html')) {
             localStorage.setItem('color-team2', this.value);
             updateTeamColors();
         });
-        // Charger la couleur si déjà choisie
         window.addEventListener('DOMContentLoaded', function() {
             const c1 = localStorage.getItem('color-team1');
             const c2 = localStorage.getItem('color-team2');
@@ -47,7 +50,6 @@ if (path.endsWith('Settings.html')) {
             if (c2) colorTeam2.value = c2;
             updateTeamColors();
         });
-        // Met à jour la couleur des containers selon la sélection
         function updateTeamColors() {
             const c1 = colorTeam1.value;
             const c2 = colorTeam2.value;
@@ -67,11 +69,29 @@ if (path.endsWith('Settings.html')) {
         });
     });
 
-    // Options bouton (placeholder)
-    const optionsBtn = document.querySelector('.options button');
-    if (optionsBtn) {
-        optionsBtn.addEventListener('click', function() {
-            // option : demande a maman
+    // Stocke la durée du match (minutes et secondes) dans le localStorage à chaque changement
+    const matchDurationMinInput = document.getElementById('match-duration-min');
+    const matchDurationSecInput = document.getElementById('match-duration-sec');
+    if (matchDurationMinInput && matchDurationSecInput) {
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedMin = localStorage.getItem('match-duration-min');
+            const savedSec = localStorage.getItem('match-duration-sec');
+            if (savedMin !== null) matchDurationMinInput.value = savedMin;
+            if (savedSec !== null) matchDurationSecInput.value = savedSec;
+        });
+        matchDurationMinInput.addEventListener('input', function() {
+            localStorage.setItem('match-duration-min', this.value);
+        });
+        matchDurationSecInput.addEventListener('input', function() {
+            localStorage.setItem('match-duration-sec', this.value);
+        });
+    }
+
+    // Bouton retour
+    const backBtn = document.getElementById('back-btn');
+    if (backBtn) {
+        backBtn.addEventListener('click', function() {
+            window.history.back();
         });
     }
 }
@@ -80,6 +100,8 @@ if (path.endsWith('Settings.html')) {
 if (path.endsWith('Match.html')) {
     let score1 = 0;
     let score2 = 0;
+    let paniers1 = 0;
+    let paniers2 = 0;
     let timer = 0;
     let timerInterval = null;
 
@@ -94,7 +116,6 @@ if (path.endsWith('Match.html')) {
     if (team1ColorDiv) team1ColorDiv.style.backgroundColor = team1Color;
     if (team2ColorDiv) team2ColorDiv.style.backgroundColor = team2Color;
 
-
     // Changement de possession
     function switchPossession() {
         possession = (possession === '1') ? '2' : '1';
@@ -102,12 +123,11 @@ if (path.endsWith('Match.html')) {
         updatePossessionDisplay();
     }
 
-        // Affichage de l'équipe en possession sur le jersey
+    // Affichage de l'équipe en possession sur le jersey
     function updatePossessionDisplay() {
         const label = document.getElementById('possession-label');
         const jersey = document.getElementById('jersey');
         if (!label || !jersey) return;
-        // Always get the latest colors from localStorage
         const currentTeam1Color = localStorage.getItem('color-team1') || '#002fff';
         const currentTeam2Color = localStorage.getItem('color-team2') || '#f44336';
         if (possession === '1') {
@@ -119,11 +139,9 @@ if (path.endsWith('Match.html')) {
         }
     }
 
-    // S'assurer que l'affichage de la possession est mis à jour après le chargement du DOM
     window.addEventListener('DOMContentLoaded', function() {
         updatePossessionDisplay();
     });
-
 
     function updateScores() {
         const s1 = document.getElementById('score1');
@@ -132,77 +150,12 @@ if (path.endsWith('Match.html')) {
         if (s2) s2.textContent = score2;
     }
 
-
-    function updateTimer() {
-        const timerElement = document.getElementById('timer');
-        if (timerElement) {
-            let minutes = Math.floor(timer / 60);
-            let seconds = timer % 60;
-            timerElement.textContent = `${minutes < 10 ? '0' : ''}${minutes}'${seconds < 10 ? '0' : ''}${seconds}`;
-        }
-    }
-
-    const tirBtn = document.getElementById('tir');
-    const marqueBtn = document.getElementById('marque');
-    const doublePasBtn = document.getElementById('double-pas');
-    const recupEquipeBtn = document.getElementById('recup-equipe');
-    // const recupAdverseBtn = document.getElementById('recup-adverse'); // Retiré
-    const perteBalleBtn = document.getElementById('perte-balle');
-
-    if (tirBtn) {
-        tirBtn.addEventListener('click', () => {
-            const tirOptions = document.getElementById('tir-options');
-            if (tirOptions) {
-                // Toggle display: show if hidden, hide if visible
-                if (tirOptions.style.display === 'block') {
-                    tirOptions.style.display = 'none';
-                } else {
-                    tirOptions.style.display = 'block';
-                    // startTimer(); // Removed: function does not exist
-                }
-            }
-        });
-    }
-    if (marqueBtn) {
-        marqueBtn.addEventListener('click', () => {
-            if (possession === '1') score1 += 2;
-            else score2 += 2;
-            updateScores();
-            const tirOptions = document.getElementById('tir-options');
-            if (tirOptions) tirOptions.style.display = 'none';
-            switchPossession();
-        });
-    }
-    if (doublePasBtn) {
-        doublePasBtn.addEventListener('click', () => {
-            if (possession === '1') score1 += 10;
-            else score2 += 10;
-            updateScores();
-            const tirOptions = document.getElementById('tir-options');
-            if (tirOptions) tirOptions.style.display = 'none';
-            switchPossession();
-        });
-    }
-    if (recupEquipeBtn) {
-        recupEquipeBtn.addEventListener('click', () => {
-            const tirOptions = document.getElementById('tir-options');
-            if (tirOptions) tirOptions.style.display = 'none';
-        });
-    }
-    if (perteBalleBtn) {
-        perteBalleBtn.addEventListener('click', () => {
-            switchPossession();
-            const tirOptions = document.getElementById('tir-options');
-            if (tirOptions) tirOptions.style.display = 'none';
-            // startTimer(); // Removed: function does not exist
-        });
-    }
-
-    // --- Gestion du mode chrono/rebours ---
+    // Chronomètre/Rebours automatique
     let timerMode = localStorage.getItem('timer-mode') || 'chrono';
     let timerElement = document.getElementById('timer');
-    // let timerInterval; // Removed duplicate declaration
-    let duration = parseInt(localStorage.getItem('match-duration')) || 10; // Durée par défaut de 10 minutes
+    let min = parseInt(localStorage.getItem('match-duration-min')) || 10;
+    let sec = parseInt(localStorage.getItem('match-duration-sec')) || 0;
+    let duration = min * 60 + sec;
 
     function formatTime(sec) {
         let m = Math.floor(sec / 60);
@@ -220,7 +173,7 @@ if (path.endsWith('Match.html')) {
     }
 
     function startRebours() {
-        let seconds = duration * 60;
+        let seconds = duration;
         timerElement.textContent = formatTime(seconds);
         timerInterval = setInterval(() => {
             seconds--;
@@ -232,38 +185,97 @@ if (path.endsWith('Match.html')) {
         }, 1000);
     }
 
-    // Lancer le timer uniquement au clic sur le bouton
-    const startTimerBtn = document.getElementById('start-timer');
-    if (startTimerBtn) {
-        startTimerBtn.addEventListener('click', function() {
-            // Empêche de lancer plusieurs timers
-            if (timerInterval) clearInterval(timerInterval);
-            if (timerMode === 'rebours') {
-                startRebours();
-            } else {
-                startChrono();
+    window.addEventListener('DOMContentLoaded', function() {
+        if (timerInterval) clearInterval(timerInterval);
+        if (timerMode === 'rebours') {
+            startRebours();
+        } else {
+            startChrono();
+        }
+        updateScores();
+        updatePossessionDisplay();
+    });
+
+    // Gestion des boutons d'action
+    const tirBtn = document.getElementById('tir');
+    const marqueBtn = document.getElementById('marque');
+    const doublePasBtn = document.getElementById('double-pas');
+    const recupEquipeBtn = document.getElementById('recup-equipe');
+    const perteBalleBtn = document.getElementById('perte-balle');
+
+    if (tirBtn) {
+        tirBtn.addEventListener('click', () => {
+            const tirOptions = document.getElementById('tir-options');
+            if (tirOptions) {
+                tirOptions.style.display = tirOptions.style.display === 'block' ? 'none' : 'block';
             }
+            // Statistiques
+            matchStats.tirs[matchStats.currentPossession]++;
+            localStorage.setItem('matchStats', JSON.stringify(matchStats));
+        });
+    }
+    if (marqueBtn) {
+        marqueBtn.addEventListener('click', () => {
+            if (possession === '1') score1 += 2, paniers1 += 1;
+            else score2 += 2, paniers2 += 1;
+            updateScores();
+            const tirOptions = document.getElementById('tir-options');
+            if (tirOptions) tirOptions.style.display = 'none';
+            // Statistiques
+            matchStats.paniers[matchStats.currentPossession]++;
+            let newTeam = matchStats.currentPossession === '1' ? '2' : '1';
+            switchPossessionStats(newTeam);
+            localStorage.setItem('matchStats', JSON.stringify(matchStats));
+            switchPossession();
+        });
+    }
+    if (doublePasBtn) {
+        doublePasBtn.addEventListener('click', () => {
+            if (possession === '1') score1 += 10, paniers1 += 1;
+            else score2 += 10, paniers2 += 1;
+            updateScores();
+            const tirOptions = document.getElementById('tir-options');
+            if (tirOptions) tirOptions.style.display = 'none';
+            // Statistiques
+            matchStats.paniers[matchStats.currentPossession]++;
+            let newTeam = matchStats.currentPossession === '1' ? '2' : '1';
+            switchPossessionStats(newTeam);
+            localStorage.setItem('matchStats', JSON.stringify(matchStats));
+            switchPossession();
+        });
+    }
+    if (recupEquipeBtn) {
+        recupEquipeBtn.addEventListener('click', () => {
+            const tirOptions = document.getElementById('tir-options');
+            if (tirOptions) tirOptions.style.display = 'none';
+            // Statistiques
+            localStorage.setItem('matchStats', JSON.stringify(matchStats));
+        });
+    }
+    if (perteBalleBtn) {
+        perteBalleBtn.addEventListener('click', () => {
+            switchPossession();
+            const tirOptions = document.getElementById('tir-options');
+            if (tirOptions) tirOptions.style.display = 'none';
+            // Statistiques
+            matchStats.pertes[matchStats.currentPossession]++;
+            let newTeam = matchStats.currentPossession === '1' ? '2' : '1';
+            switchPossessionStats(newTeam);
+            localStorage.setItem('matchStats', JSON.stringify(matchStats));
         });
     }
 
-    const matchEndBtn = document.getElementById('match-end');
-    if (matchEndBtn) {
-        matchEndBtn.addEventListener('click', function() {
-            window.location.href = 'Statistiques.html';
-        });
-    }
-
+    // Statistiques du match
     let matchStats = {
         possession: {1: 0, 2: 0}, // en secondes
         tirs: {1: 0, 2: 0},
-        buts: {1: 0, 2: 0},
+        paniers: {1: 0, 2: 0},
         pertes: {1: 0, 2: 0},
         currentPossession: localStorage.getItem('possession') || '1',
         possessionStart: null,
         totalTime: 0
     };
 
-    // Chronométrage de la possession
     function startPossessionTimer() {
         matchStats.possessionStart = Date.now();
     }
@@ -276,78 +288,33 @@ if (path.endsWith('Match.html')) {
         matchStats.currentPossession = team;
         matchStats.possessionStart = Date.now();
     }
-    // Initialisation
     startPossessionTimer();
 
-    // Gestion des boutons d'action
-    if (perteBalleBtn) {
-        perteBalleBtn.addEventListener('click', function() {
-            matchStats.pertes[matchStats.currentPossession]++;
-            // Changer la possession
-            let newTeam = matchStats.currentPossession === '1' ? '2' : '1';
-            switchPossessionStats(newTeam);
-            localStorage.setItem('matchStats', JSON.stringify(matchStats));
-        });
-    }
-    if (tirBtn) {
-        tirBtn.addEventListener('click', function() {
-            matchStats.tirs[matchStats.currentPossession]++;
-            // Affiche les options de tir (déjà géré dans ton code)
-            localStorage.setItem('matchStats', JSON.stringify(matchStats));
-        });
-    }
-    if (marqueBtn) {
-        marqueBtn.addEventListener('click', function() {
-            matchStats.buts[matchStats.currentPossession]++;
-            // Après un but, la possession change
-            let newTeam = matchStats.currentPossession === '1' ? '2' : '1';
-            switchPossessionStats(newTeam);
-            localStorage.setItem('matchStats', JSON.stringify(matchStats));
-        });
-    }
-    if (recupEquipeBtn) {
-        recupEquipeBtn.addEventListener('click', function() {
-            // La même équipe garde la possession, rien à faire
-            localStorage.setItem('matchStats', JSON.stringify(matchStats));
-        });
-    }
-    if (typeof recupAdverseBtn !== 'undefined' && recupAdverseBtn) {
-        recupAdverseBtn.addEventListener('click', function() {
-            let newTeam = matchStats.currentPossession === '1' ? '2' : '1';
-            switchPossessionStats(newTeam);
-            localStorage.setItem('matchStats', JSON.stringify(matchStats));
-        });
-    }
-
     // Fin du match : sauvegarde et redirection
+    const matchEndBtn = document.getElementById('match-end');
     if (matchEndBtn) {
         matchEndBtn.addEventListener('click', function() {
-            // Ajoute la dernière période de possession
             if (matchStats.possessionStart) {
                 let elapsed = Math.floor((Date.now() - matchStats.possessionStart) / 1000);
                 matchStats.possession[matchStats.currentPossession] += elapsed;
                 matchStats.totalTime += elapsed;
             }
-            // Sauvegarde dans le localStorage
             localStorage.setItem('matchStats', JSON.stringify(matchStats));
             window.location.href = 'Statistiques.html';
         });
     }
 
-    // Initialisation
-    updateScores();
-    updateTimer();
-    // S'assurer que les couleurs sont chargées après le chargement du DOM
-    window.addEventListener('DOMContentLoaded', function() {
-        updatePossessionDisplay();
-    });
-    // Appel immédiat pour compatibilité si le DOM est déjà prêt
-    updatePossessionDisplay();
+    // Bouton retour
+    const backBtn = document.getElementById('back-btn');
+    if (backBtn) {
+        backBtn.addEventListener('click', function() {
+            window.history.back();
+        });
+    }
 }
 
 // --- Pour Statistiques.html ---
 if (path.endsWith('Statistiques.html')) {
-    // Récupère les stats du match
     const color1 = localStorage.getItem('color-team1') || '#002fff';
     const color2 = localStorage.getItem('color-team2') || '#f44336';
     const color3 = "#808080"; // gris
@@ -358,7 +325,7 @@ if (path.endsWith('Statistiques.html')) {
     const possessionElem = document.getElementById('possession');
     if (possessionElem) possessionElem.textContent = `${p1}% - ${p2}%`;
 
-    // Barres de possession (SVG)      
+    // Barres de possession (SVG)
     let bar = `<svg width="100%" height="40">
         <rect x="0" y="5" width="${p1}%" height="30" fill="${color1}"/>
         <rect x="${p1}%" y="5" width="${p2}%" height="30" fill="${color2}"/>
@@ -371,28 +338,23 @@ if (path.endsWith('Statistiques.html')) {
     // Calcul du nombre de tirs et possessions pour chaque équipe
     let tirs1 = stats.tirs?.['1'] || 0;
     let tirs2 = stats.tirs?.['2'] || 0;
-    let buts1 = stats.buts?.['1'] || 0;
-    let buts2 = stats.buts?.['2'] || 0;
+    let paniers1 = stats.paniers?.['1'] || 0;
+    let paniers2 = stats.paniers?.['2'] || 0;
     let pertes1 = stats.pertes?.['1'] || 0;
     let pertes2 = stats.pertes?.['2'] || 0;
 
     // Calcul du nombre de changements de possession (la balle change de camp)
     let nbChangementsPossession = 0;
     if (stats && stats.possession) {
-        // On peut approximer le nombre de changements de possession par le nombre total de pertes + buts
-        nbChangementsPossession = (parseInt(pertes1, 10) + parseInt(pertes2, 10)) + (parseInt(buts1, 10) + parseInt(buts2, 10));
+        nbChangementsPossession = (parseInt(pertes1, 10) + parseInt(pertes2, 10)) + (parseInt(paniers1, 10) + parseInt(paniers2, 10));
     }
 
-    // Possessions = nombre de changements de possession pour chaque équipe
-    // On répartit équitablement (ou selon la possession initiale si besoin)
     let possessions1 = Math.floor(nbChangementsPossession / 2);
     let possessions2 = nbChangementsPossession - possessions1;
 
-    // On considère au moins 1 possession si l'équipe a eu la balle
     if (possessions1 === 0 && (parseInt(stats.possession?.['1'] || 0, 10) > 0)) possessions1 = 1;
     if (possessions2 === 0 && (parseInt(stats.possession?.['2'] || 0, 10) > 0)) possessions2 = 1;
 
-    // Barres distinctes pour chaque équipe
     function tirBar(tirs, possessions, color) {
         let percent = possessions ? Math.round((tirs * 100) / possessions) : 0;
         return `<svg width="100%" height="30">
@@ -410,16 +372,27 @@ if (path.endsWith('Statistiques.html')) {
              <div>${tirBar(tirs2, possessions2, color2)}</div>`;
     }
 
-    // Affichage des autres stats
+    function panierBar(paniers, tirs, color) {
+        let percent = tirs ? Math.round((paniers * 100) / tirs) : 0;
+        return `<svg width="100%" height="30">
+            <rect x="0" y="5" width="100%" height="20" fill="${color3}"/>
+            <rect x="0" y="5" width="${percent}%" height="20" fill="${color}"/>
+            <text x="10" y="20" fill="#fff" font-size="14">${paniers} paniers / ${tirs} tirs</text>
+            <text x="95%" y="20" fill="#fff" font-size="14" text-anchor="end">${percent}%</text>
+        </svg>`;
+    }
+
+    const paniersurTirsElem = document.getElementById('paniers-sur-tirs');
+    if (paniersurTirsElem) {
+        paniersurTirsElem.innerHTML =
+            `<div style="margin-bottom:8px;">${panierBar(paniers1, tirs1, color1)}</div>
+             <div>${panierBar(paniers2, tirs2, color2)}</div>`;
+    }
+
     const tirsElem = document.getElementById('tirs');
     if (tirsElem) tirsElem.textContent = `${tirs1} - ${tirs2}`;
-    const butsElem = document.getElementById('buts');
-    if (butsElem) butsElem.textContent = `${buts1} - ${buts2}`;
+    const paniersElem = document.getElementById('paniers');
+    if (paniersElem) paniersElem.textContent = `${paniers1} - ${paniers2}`;
     const pertesElem = document.getElementById('pertes');
     if (pertesElem) pertesElem.textContent = `${pertes1} - ${pertes2}`;
 }
-
-// Bouton retour
-document.getElementById('back-btn').addEventListener('click', function() {
-    window.history.back();
-});
